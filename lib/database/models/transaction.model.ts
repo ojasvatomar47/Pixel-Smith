@@ -1,41 +1,31 @@
 import { Schema, model, models } from "mongoose";
 
-const UserSchema = new Schema({
-    clerkId: {
+const TransactionSchema = new Schema({
+    createdAt: {
+        type: Date,
+        default: Date.now,
+    },
+    stripeId: {
         type: String,
         required: true,
         unique: true,
     },
-    email: {
-        type: String,
-        required: true,
-        unique: true,
-    },
-    username: {
-        type: String,
-        required: true,
-        unique: true,
-    },
-    photo: {
-        type: String,
-        required: true,
-    },
-    firstName: {
-        type: String,
-    },
-    lastName: {
-        type: String,
-    },
-    planId: {
+    amount: {
         type: Number,
-        default: 1,
+        required: true,
     },
-    creditBalance: {
+    plan: {
+        type: String,
+    },
+    credits: {
         type: Number,
-        default: 10,
+    },
+    buyer: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
     },
 });
 
-const User = models?.User || model("User", UserSchema);
+const Transaction = models?.Transaction || model("Transaction", TransactionSchema);
 
-export default User;
+export default Transaction;
