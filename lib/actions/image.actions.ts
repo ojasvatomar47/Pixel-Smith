@@ -156,3 +156,37 @@ export async function getAllImages({ limit = 9, page = 1, searchQuery = '' }: {
         handleError(error)
     }
 }
+
+// GET IMAGES BY USER
+export async function getUserImages({
+    limit = 9,
+    page = 1,
+    userId,
+}: {
+    limit?: number;
+    page: number;
+    userId: string;
+}) {
+    try {
+        await connectToDatabase();
+
+        // to figure out how many pages to skip based on the pagination
+        const skipAmount = (Number(page) - 1) * limit;
+
+        // find images by a specific author
+        const images = await populateUser(Image.find({ author: userId }))
+            .sort({ updatedAt: -1 })
+            .skip(skipAmount)
+            .limit(limit);
+
+        // get all the images
+        const totalImages = await Image.find({ author: userId }).countDocuments();
+
+        return {
+            data: JSON.parse(JSON.stringify(images)),
+            totalPages: Math.ceil(totalImages / limit),
+        };
+    } catch (error) {
+        handleError(error);
+    }
+}
